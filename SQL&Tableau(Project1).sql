@@ -1,3 +1,4 @@
+-- A Breakdown Between Male and Female Employees
 SELECT year(from_date) as calendar_year, gender, COUNT(e.emp_no) as num_of_employees
 FROM t_dept_emp de JOIN t_employees e ON de.emp_no = e.emp_no
 WHERE year(from_date) >= 1990
@@ -5,30 +6,7 @@ GROUP BY calendar_year, gender
 ORDER BY calendar_year
 ;
 
-SELECT 
-CASE 
-WHEN from_date < '1998-01-01' THEN 'before'
-WHEN from_date >= '1998-01-01' THEN 'on or after'
-END as jan_1_1998,
-gender, COUNT(de.emp_no)
-FROM dept_emp de JOIN employees e ON e.emp_no = de.emp_no
-GROUP BY jan_1_1998, gender;
-
-SELECT 
-    CASE
-        WHEN from_date < '1998-01-01' THEN 'before'
-        ELSE 'on or after'
-    END AS jan_1_1998,
-    e.gender,
-    COUNT(e.emp_no) AS num_of_employees
-FROM
-    dept_emp de
-        JOIN
-    employees e ON e.emp_no = de.emp_no
-GROUP BY jan_1_1998 , e.gender;
-
-USE employees_mod;
-
+-- Average Annual Employee Salary
 SELECT 
     td.dept_name,
     te.gender,
@@ -58,6 +36,7 @@ FROM
     t_employees te ON te.emp_no = tdm.emp_no
 ORDER BY tdm.emp_no , calendar_year;
 
+-- Numbers of Managers per Department
 SELECT 
     a.dept_name,
     a.gender,
@@ -95,29 +74,7 @@ GROUP BY te.gender , td.dept_name , calendar_year
 HAVING calendar_year <= 2002
 ORDER BY tde.dept_no;
 
-SELECT 
-    e.gender,
-    dept_name,
-    ROUND(AVG(salary), 2) AS avg_salary,
-    CASE
-        WHEN de.from_date < '1998-01-01' THEN 'before'
-        ELSE 'on or after'
-    END AS jan_1_1998
-FROM
-    employees e
-        JOIN
-    salaries s ON e.emp_no = s.emp_no
-        JOIN
-    dept_emp de ON de.emp_no = e.emp_no
-        JOIN
-    departments d ON de.dept_no = d.dept_no
-WHERE
-    de.from_date >= '1990-01-01'
-GROUP BY d.dept_no , gender , jan_1_1998
-ORDER BY d.dept_no ASC;
-
-DROP PROCEDURE filter_salary;
-
+--Average Employee Salary (Since 1990)
 DELIMITER $$
 CREATE PROCEDURE filter_salary(IN p_less_salary FLOAT, IN p_more_salary FLOAT)
 DETERMINISTIC NO SQL READS SQL DATA
